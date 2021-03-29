@@ -1,5 +1,10 @@
 <template>
   <div>
+    <ul>
+      <li v-for="chat of chats" :key="chat.id">
+        {{ chat.id }}
+      </li>
+    </ul>
     <button @click="createChatRoom()">Create New Chat Room</button>
   </div>
 </template>
@@ -7,6 +12,16 @@
 <script>
 import { db } from '../firebase';
 export default {
+  data() {
+    return {
+      chats: [],
+    };
+  },
+  firestore() {
+    return {
+      chats: db.collection('chats').where('owner', '==', this.uid),
+    };
+  },
   methods: {
     async createChatRoom() {
       const newChat = await db.collection('chats').add({
