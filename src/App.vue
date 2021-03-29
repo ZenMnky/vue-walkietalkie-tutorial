@@ -8,8 +8,12 @@
 </template>
 
 <script>
+import { auth } from './firebase';
+
+console.log('auth: ', auth);
+
 export default {
-  name: "App",
+  name: 'App',
   components: {},
 };
 </script>
