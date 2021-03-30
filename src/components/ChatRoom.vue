@@ -34,7 +34,7 @@
 <script>
 import User from './User';
 import ChatMessage from './ChatMessage';
-import { db } from '../firebase';
+import { db, storage } from '../firebase';
 
 export default {
   components: {
@@ -70,15 +70,31 @@ export default {
     async addMessage(uid) {
       this.loading = true;
 
+      let audioURL = null;
+
       const { id: messageId } = this.messagesCollection.doc();
+
+      if (this.newAudio) {
+        const storageRef = storage
+          .ref('chats')
+          .child(this.chatId)
+          .child(`${messageId}.wav`);
+
+        await storageRef.put(this.newAudio);
+
+        audioURL = await storageRef.getDownloadURL();
+      }
 
       await this.messagesCollection.doc(messageId).set({
         text: this.newMessageText,
         sender: uid,
         createdAt: Date.now(),
+        audioURL,
       });
+
       this.loading = false;
       this.newMessageText = '';
+      this.newAudio = null;
     },
     async record() {
       this.newAudio = null;
